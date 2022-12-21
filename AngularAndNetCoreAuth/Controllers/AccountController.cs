@@ -10,11 +10,11 @@ namespace AngularAndNetCoreAuth.Controllers
     //[EnableCors("EnableCors")]
     public class AccountController : Controller
     {
-        private readonly ApplicationDbContext _db;
-        private readonly IAuthServices AuthService;
+        private readonly UsersDbContext _db;
+        private readonly IAuthService AuthService;
 
 
-        public AccountController(ApplicationDbContext db, IAuthServices authService)
+        public AccountController(UsersDbContext db, IAuthService authService)
         {
             _db = db;
             AuthService = authService;

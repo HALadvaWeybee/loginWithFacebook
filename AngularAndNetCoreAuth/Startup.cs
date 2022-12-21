@@ -15,7 +15,6 @@ using Service.Models;
 using System;
 using System.Text;
 using System.Threading.Tasks;
-using static AngularAndNetCoreAuth.Repo.AuthServices;
 
 namespace AngularAndNetCoreAuth
 {
@@ -28,13 +27,62 @@ namespace AngularAndNetCoreAuth
 
         public IConfiguration Configuration { get; }
 
+        /*public void ConfigureServices(IServiceCollection services)
+        {
+
+            services.AddControllersWithViews();
+            //JWT Identity Authentication
+            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddIdentity<ApplicationUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();
+            // In production, the Angular files will be served from this directory
+            services.AddSpaStaticFiles(configuration =>
+            {
+                configuration.RootPath = "ClientApp/dist";
+            });
+
+            services.AddAuthentication()
+    .AddFacebook(
+        options =>
+        {
+            options.SaveTokens = true;
+            options.AppId = "1133439733973767";
+            options.AppSecret = "beaff98b4f7357f1d0392bb7747776b6";
+            options.Events.OnTicketReceived = (context) =>
+            {
+                return Task.CompletedTask;
+            };
+            options.Events.OnCreatingTicket = (context) =>
+            {
+                return Task.CompletedTask;
+            };
+        });
+            //services.AddDbContext<ApplicationDbContext>(options =>
+
+            /////Add Microsoft.EntityFrameworkCore.SqlServer package to be able to use .UseSqlServer method.
+            //    options.UseSqlServer(Configuration.GetConnectionString("SocialAuth")));
+            //services.AddIdentityCore<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            //   .AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddScoped<IAuthServices, AuthServices>();
+
+
+            ///Enable CORS. Search for the AspNetCore Cors package and add it if you have any issues.
+            services.AddCors(option =>
+            {
+                option.AddPolicy("EnableCors", builder =>
+                {
+                    builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().Build();
+                });
+
+            });
+
+        }*/
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
 
             services.AddControllersWithViews();
             //JWT Identity Authentication
-            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Transient);
+            services.AddDbContext<UsersDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Transient);
 
             //services.AddIdentity<ApplicationUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();
             // In production, the Angular files will be served from this directory
@@ -42,6 +90,8 @@ namespace AngularAndNetCoreAuth
             {
                 configuration.RootPath = "ClientApp/dist";
             });
+
+            services.AddIdentityCore<ApplicationUser>().AddEntityFrameworkStores<UsersDbContext>().AddDefaultTokenProviders();
 
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
@@ -52,7 +102,7 @@ namespace AngularAndNetCoreAuth
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
                 options.Password.RequireLowercase = false;
-            }).AddEntityFrameworkStores<ApplicationDbContext>();
+            }).AddEntityFrameworkStores<UsersDbContext>();
 
             var jwtSection = Configuration.GetSection("JwtBearerTokenSettings");
             services.Configure<JwtBearerTokenSettings>(jwtSection);
@@ -102,7 +152,7 @@ namespace AngularAndNetCoreAuth
             //    options.UseSqlServer(Configuration.GetConnectionString("SocialAuth")));
             //services.AddIdentityCore<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
             //   .AddEntityFrameworkStores<ApplicationDbContext>();
-            services.AddScoped<IAuthServices, AuthServices>();
+            services.AddScoped<IAuthService, AuthService>();
 
 
             ///Enable CORS. Search for the AspNetCore Cors package and add it if you have any issues.

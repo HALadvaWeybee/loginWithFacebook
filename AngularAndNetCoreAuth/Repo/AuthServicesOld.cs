@@ -16,19 +16,19 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using static AngularAndNetCoreAuth.Repo.AuthServices;
+using static AngularAndNetCoreAuth.Repo.AuthServicesOld;
 
 namespace AngularAndNetCoreAuth.Repo
 {
-    public class AuthServices: IAuthServices
+    public class AuthServicesOld: IAuthServices
     {
-        private readonly ApplicationDbContext dbContext;
+        private readonly UsersDbContext dbContext;
         private readonly UserManager<ApplicationUser> userManager;
         private readonly JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
         private readonly JwtBearerTokenSettings jwtBearerTokenSettings;
         private IHttpContextAccessor httpContextAccessor;
 
-        public AuthServices(IOptions<JwtBearerTokenSettings> _jwtTokenOptions, ApplicationDbContext dbContext, UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor)
+        public AuthServicesOld(IOptions<JwtBearerTokenSettings> _jwtTokenOptions, UsersDbContext dbContext, UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor)
         {
             jwtBearerTokenSettings = _jwtTokenOptions.Value;
             this.dbContext = dbContext;
@@ -103,7 +103,7 @@ namespace AngularAndNetCoreAuth.Repo
         {
             Response response = new Response();            // Generate access token
 
-            string accessToken =  GenerateAccessToken(identityUser).Result;
+            string accessToken =  GenerateAccessToken(identityUser).ToString();
 
             // Generate refresh token and set it to cookie
 
@@ -141,10 +141,11 @@ namespace AngularAndNetCoreAuth.Repo
             }
             return accessToken;
         }
-        public async Task<string> GenerateAccessToken(ApplicationUser identityUser)
+
+        public string GenerateAccessToken(ApplicationUser identityUser)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(jwtBearerTokenSettings.SecretKey);
+            var key = Encoding.ASCII.GetBytes(jwtBearerTokenSettings.SecretKey?.ToString());
 
             // var userRoles = userManager.GetRolesAsync(identityUser);
             var authclaim = new ClaimsIdentity(new Claim[]
@@ -158,10 +159,19 @@ namespace AngularAndNetCoreAuth.Repo
             //    authclaim.AddClaim(new Claim(ClaimTypes.Role, item));
             //}
 
-            var roleName = (await userManager.GetRolesAsync(identityUser)).FirstOrDefault();
+            string roleName = string.Empty;
+
+            //try
+            //{
+            //    roleName = userManager.GetRolesAsync(identityUser).Result.FirstOrDefault();
+            //}
+            //catch(Exception ex) 
+            //{
+            //    throw new NotImplementedException(ex.Message);
+            //}
 
             DateTime ExpiryOn;
-            if (roleName == "advisor" && identityUser.ExpiryTime != null)
+            if (!string.IsNullOrEmpty(roleName) && (roleName == "advisor" && identityUser.ExpiryTime != null))
             {
                 ExpiryOn = DateTime.UtcNow.AddSeconds(Convert.ToDouble(identityUser.ExpiryTime));
             }
@@ -181,6 +191,7 @@ namespace AngularAndNetCoreAuth.Repo
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
+
         public AspNetRefreshToken GenerateRefreshToken(string userId)
         {
             var user = userManager.FindByIdAsync(userId).Result;
