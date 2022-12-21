@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Router } from '@angular/router';
 
 
 
@@ -12,16 +11,14 @@ import { Router } from '@angular/router';
 export class AccountService {
 
   // communicate with web api
-  constructor(private http: HttpClient, private router: Router) { }
+  constructor(private http: HttpClient) { }
 
   // properties needed
-  private baseUrlLogin = 'https://localhost:44309/api/Account/login';
+  private baseUrlLogin = 'https://localhost:44309/api/Account/FacebookLogin';
   private loginStatus = new BehaviorSubject<boolean>(this.getLoginStatus());
   private username = new BehaviorSubject<string>(localStorage.getItem('username'));
   private userRole = new BehaviorSubject<string>(localStorage.getItem('userRole'));
   private UserId = new BehaviorSubject<string>(localStorage.getItem('UserId'));
-
-
 
   getLoginStatus(): boolean {
     return false;
@@ -42,8 +39,8 @@ export class AccountService {
   }
 
   // Login method that sends the data to out API
-  Login(userData) {
-    return this.http.post<any>(this.baseUrlLogin, userData).pipe(
+  Login(accessToken:any) {
+    return this.http.post<any>(this.baseUrlLogin, accessToken).pipe(
       map(result => {
         console.log("this is login", result);
         

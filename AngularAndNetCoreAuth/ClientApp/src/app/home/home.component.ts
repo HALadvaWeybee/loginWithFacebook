@@ -10,7 +10,7 @@ import { FacebookLoginProvider} from 'angularx-social-login';
 export class HomeComponent {
   //create array to store user data we need
   userData: any[] = [];
-
+  accessToken:any = {};
   // create a field to hold error messages so we can bind it to our template
   resultMessage: string;
 
@@ -34,27 +34,32 @@ export class HomeComponent {
         console.log(platform + ' logged in user data is= ', response);
 
         // Take the details we need and store in an array
-        this.userData.push({
-          UserId: response.id,
-          Provider: response.provider,
-          FirstName: response.firstName,
-          LastName: response.lastName,
-          EmailAddress: response.email,
-          PictureUrl: response.photoUrl,
-          OauthToken: response.authToken
-        });
+        // this.userData.push({
+        //   UserId: response.id,
+        //   Provider: response.provider,
+        //   FirstName: response.firstName,
+        //   LastName: response.lastName,
+        //   EmailAddress: response.email,
+        //   PictureUrl: response.photoUrl,
+        //   OauthToken: response.authToken
+        // });
+
+        this.accessToken = {
+           Token: response.authToken,
+           idToken: response.id,
+           RememberMe: "yes"
+        }
 
         // Take the array and send to our account.service.login method
-        this.accountService.Login(this.userData[0]).subscribe(
+        this.accountService.Login(this.accessToken).subscribe(
           result => {
             console.log("Success i got the result in console");
-            window.location.reload();
-
+            // window.location.reload();
           },
           error => {
             // this.loading = false;
             this.resultMessage = 'There was an error from our database. Sorry!';
-            window.location.reload();
+            // window.location.reload();
             console.log(error);
           }
         );
@@ -62,7 +67,7 @@ export class HomeComponent {
       },
       error => {
         console.log(error);
-        window.location.reload();
+        // window.location.reload();
         // this.loading = false;
         this.resultMessage = error;
       }

@@ -38,21 +38,22 @@ namespace AngularAndNetCoreAuth.Repo
 
       
         public async Task<Response> FacebookLogin(TokenModel accessToken)
+        
         {
             // 1.generate an app access token
             Response response = new Response();
             HttpClient client = new HttpClient();
             // 3. we've got a valid token so we can request user data from fb
-            var userInfoResponse = await client.GetStringAsync($"https://graph.facebook.com/v2.8/me?fields=id,email,first_name,last_name,name&access_token={accessToken.idToken}");
+            var userInfoResponse = await client.GetStringAsync($"https://graph.facebook.com/v2.8/me?fields=id,email,first_name,last_name,name&access_token={accessToken.Token}");
             var userInfo = JsonConvert.DeserializeObject<FacebookUserData>(userInfoResponse);
-            var info = new UserLoginInfo("FACEBOOK", userInfo.Id, "FACEBOOK");
-            var user = await userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
+            var info = new UserLoginInfo("FACEBOOK", userInfo.id, userInfo.first_name);
+            var user = userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
             var identityUser = new ApplicationUser() { UserName = userInfo.first_name };
             //var isexist = userManager.Users.FirstOrDefault(x => x.UserName == identityUser.UserName);
             if (user == null)
             {
                 var result = await userManager.CreateAsync(identityUser);
-                await userManager.AddLoginAsync(identityUser, info);
+                var addeduser = await userManager.AddLoginAsync(identityUser, info);
                 if (!result.Succeeded)
                 {
                     Dictionary<string, string> valuePairs = new Dictionary<string, string>();
@@ -102,7 +103,7 @@ namespace AngularAndNetCoreAuth.Repo
         {
             Response response = new Response();            // Generate access token
 
-            string accessToken = GenerateAccessToken(identityUser);
+            string accessToken =  GenerateAccessToken(identityUser).Result;
 
             // Generate refresh token and set it to cookie
 
@@ -140,7 +141,7 @@ namespace AngularAndNetCoreAuth.Repo
             }
             return accessToken;
         }
-        public string GenerateAccessToken(ApplicationUser identityUser)
+        public async Task<string> GenerateAccessToken(ApplicationUser identityUser)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(jwtBearerTokenSettings.SecretKey);
@@ -157,7 +158,7 @@ namespace AngularAndNetCoreAuth.Repo
             //    authclaim.AddClaim(new Claim(ClaimTypes.Role, item));
             //}
 
-            var roleName = userManager.GetRolesAsync(identityUser).Result.FirstOrDefault();
+            var roleName = (await userManager.GetRolesAsync(identityUser)).FirstOrDefault();
 
             DateTime ExpiryOn;
             if (roleName == "advisor" && identityUser.ExpiryTime != null)
@@ -207,7 +208,6 @@ namespace AngularAndNetCoreAuth.Repo
                     CreatedOn = DateTime.UtcNow,
                     CreatedByIp = httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString(),
                     ApplicationUserId = userId
-
                 };
             }
         }

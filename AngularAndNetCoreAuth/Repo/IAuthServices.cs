@@ -8,9 +8,8 @@ namespace AngularAndNetCoreAuth.Repo
     {
         Task<Response> FacebookLogin(TokenModel accessToken);
         Response GetResponse(ApplicationUser applicationUser, TokenModel idtoken);
-
         string GenerateTokens(ApplicationUser identityUser);
-        string GenerateAccessToken(ApplicationUser identityUser);
+        Task<string> GenerateAccessToken(ApplicationUser identityUser);
         AspNetRefreshToken GenerateRefreshToken(string userId);
 
     }

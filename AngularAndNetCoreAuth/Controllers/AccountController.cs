@@ -1,10 +1,8 @@
 ﻿using AngularAndNetCoreAuth.Data;
 using AngularAndNetCoreAuth.Models;
 using AngularAndNetCoreAuth.Repo;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using static AngularAndNetCoreAuth.Repo.AuthServices;
 
 namespace AngularAndNetCoreAuth.Controllers
 {
@@ -34,7 +32,7 @@ namespace AngularAndNetCoreAuth.Controllers
         {
             var fbval = await AuthService.FacebookLogin(accessToken);
             if (fbval.Success)
-            {
+            {                                                                     
                 return Ok(fbval);
             }
             else
@@ -42,6 +40,7 @@ namespace AngularAndNetCoreAuth.Controllers
                 return new BadRequestObjectResult(fbval);
             }
         }
+
         //[HttpPost("[action]")]
         /*public async Task<IActionResult> Login([FromBody] LoginViewModel userdata)
         {
