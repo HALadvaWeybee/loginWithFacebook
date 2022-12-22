@@ -130,13 +130,11 @@ namespace AngularAndNetCoreAuth
                 };
             });
 
-            services.AddAuthentication()
-    .AddFacebook(
-        options =>
+            services.AddAuthentication().AddFacebook(options =>
         {
             options.SaveTokens = true;
-            options.AppId = "1133439733973767";
-            options.AppSecret = "beaff98b4f7357f1d0392bb7747776b6";
+            options.AppId = "533348741771469";
+            options.AppSecret = "f376a5bee91ede4e06b20bce62529681";
             options.Events.OnTicketReceived = (context) =>
             {
                 return Task.CompletedTask;

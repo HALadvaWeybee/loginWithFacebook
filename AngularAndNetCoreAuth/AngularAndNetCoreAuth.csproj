@@ -48,10 +48,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20221208135343_addtable.Designer.cs" />
-    <Compile Remove="Migrations\20221208140304_fghfg.cs" />
-    <Compile Remove="Migrations\20221208140304_fghfg.Designer.cs" />
-    <Compile Remove="Migrations\ApplicationDbContextModelSnapshot.cs" />
     <Compile Remove="Repo\AuthServicesOld.cs" />
     <Compile Remove="Repo\IAuthServicesOld.cs" />
   </ItemGroup>

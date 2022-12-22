@@ -32,7 +32,7 @@ namespace AngularAndNetCoreAuth.Controllers
         {
             var fbval = await AuthService.FacebookLogin(accessToken);
             if (fbval.Success)
-            {                                                                     
+            {
                 return Ok(fbval);
             }
             else

@@ -54,6 +54,7 @@ export class HomeComponent {
         this.accountService.Login(this.accessToken).subscribe(
           result => {
             console.log("Success i got the result in console");
+            this.resultMessage = "Success i got the result in console";
             // window.location.reload();
           },
           error => {

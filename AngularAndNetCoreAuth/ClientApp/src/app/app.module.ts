@@ -18,7 +18,7 @@ let config = new AuthServiceConfig([
     autoLogin:false,
     id: FacebookLoginProvider.PROVIDER_ID,
         //Use your FaceBook App Id here
-    provider: new FacebookLoginProvider("1133439733973767"),
+    provider: new FacebookLoginProvider("533348741771469"),
   },
 ]);
 
@@ -32,7 +32,6 @@ export function provideConfig() {
     AppComponent,
     NavMenuComponent,
     HomeComponent,
-  
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

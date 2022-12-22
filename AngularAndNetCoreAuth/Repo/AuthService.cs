@@ -137,35 +137,50 @@ namespace AngularAndNetCoreAuth.Repo
             Response response = new Response();
             HttpClient client = new HttpClient();
             // 3. we've got a valid token so we can request user data from fb
-            var userInfoResponse = await client.GetStringAsync($"https://graph.facebook.com/v2.8/me?fields=id,email,first_name,last_name,name&access_token={accessToken.idToken}");
+            var userInfoResponse = await client.GetStringAsync($"https://graph.facebook.com/v2.8/me?fields=id,email,first_name,last_name,name&access_token={accessToken.Token}");
             var userInfo = JsonConvert.DeserializeObject<FacebookUserData>(userInfoResponse);
             var info = new UserLoginInfo("FACEBOOK", userInfo.id, "FACEBOOK");
             var user = await userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
-            
+
             //var isexist = userManager.Users.FirstOrDefault(x => x.UserName == identityUser.UserName);
-            if (user == null)
+
+            try
             {
-                var identityUser = new ApplicationUser() { UserName = userInfo.first_name, UserId = 1 };
-                var result = await userManager.CreateAsync(identityUser);
-                await userManager.AddLoginAsync(identityUser, info);
-                if (!result.Succeeded)
+                if (user == null)
                 {
-                    Dictionary<string, string> valuePairs = new Dictionary<string, string>();
-                    foreach (IdentityError error in result.Errors)
+                    var identityUser = new ApplicationUser()
                     {
-                        valuePairs.Add(error.Code, error.Description);
+                        UserName = userInfo.first_name,
+                        Email = userInfo.email,
+                    };
+
+                    var result = await userManager.CreateAsync(identityUser);
+                    await userManager.AddLoginAsync(identityUser, info);
+                    if (!result.Succeeded)
+                    {
+                        Dictionary<string, string> valuePairs = new Dictionary<string, string>();
+                        foreach (IdentityError error in result.Errors)
+                        {
+                            valuePairs.Add(error.Code, error.Description);
+                        }
+                        response.Success = false;
+                        response.Message = "User Registration Failed";
+                        response.Data = valuePairs;
                     }
-                    response.Success = false;
-                    response.Message = "User Registration Failed";
-                    response.Data = valuePairs;
+                }
+                else
+                {
+                    var res = GetResponse(user, accessToken);
+                    return res;
                 }
             }
-            else
+            catch (Exception ex)
             {
-                var res = GetResponse(user, accessToken);
-                return res;
+                throw;
+                //throw new Exception;
             }
             return response;
+
         }
 
         /// <summary>
@@ -176,7 +191,6 @@ namespace AngularAndNetCoreAuth.Repo
         public string GenerateTokens(ApplicationUser identityUser)
         {
             Response response = new Response();            // Generate access token
-
             string accessToken = GenerateAccessToken(identityUser);
 
             // Generate refresh token and set it to cookie
@@ -195,6 +209,7 @@ namespace AngularAndNetCoreAuth.Repo
             {
                 identityUser.RefreshTokens = new List<AspNetRefreshToken>();
             }
+
             var GetUserById = dbContext.Users.FirstOrDefault(x => x.Email == identityUser.Email);
             if (GetUserById != null)
             {
