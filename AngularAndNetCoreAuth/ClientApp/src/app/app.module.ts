@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
-// import { NgxLoadingModule, ngxLoadingAnimationTypes } from 'ngx-loading';
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { HomeComponent } from './home/home.component';
@@ -18,7 +17,7 @@ let config = new AuthServiceConfig([
     autoLogin:false,
     id: FacebookLoginProvider.PROVIDER_ID,
         //Use your FaceBook App Id here
-    provider: new FacebookLoginProvider("533348741771469"),
+    provider: new FacebookLoginProvider("1133439733973767"),
   },
 ]);
 
@@ -37,17 +36,7 @@ export function provideConfig() {
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,
     FormsModule,
-    ///Import SocialLoginModule
     SocialLoginModule.initialize(config),
-    ///This isn't necessary. It's a just loader that I like :).
-    // NgxLoadingModule.forRoot({
-    //   animationType: ngxLoadingAnimationTypes.circle,
-    //   backdropBackgroundColour: 'rgba(192,192,192,0.4)',
-    //   backdropBorderRadius: '4px',
-    //   primaryColour: '#64b2cd',
-    //   secondaryColour: '#ffffff',
-    //   tertiaryColour: '#ffffff'
-    // }),
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
     ])

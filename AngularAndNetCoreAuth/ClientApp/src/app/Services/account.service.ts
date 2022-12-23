@@ -54,7 +54,6 @@ export class AccountService {
           localStorage.setItem('token', result.token);
           localStorage.setItem('tokenExpiration', result.expiration);
           localStorage.setItem('PictureUrl', result.pictureUrl);
-          //Check console for results
           console.log('We sent a message to our Controller API. It works');
         }
         return result;
@@ -71,7 +70,6 @@ export class AccountService {
     localStorage.removeItem('UserId');
     localStorage.removeItem('userRole');
     localStorage.removeItem('PictureUrl');
-              //Check console for results
     console.log('User Logged out successfully');
   }
 

@@ -2,7 +2,6 @@
 using AngularAndNetCoreAuth.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -37,35 +36,7 @@ namespace AngularAndNetCoreAuth.Repo
 
         AspNetRefreshToken GenerateRefreshToken(string userId);
 
-        //Task<Response> GetGoogleResponse(TokenModel idToken);
-
         Response GetResponse(ApplicationUser applicationUser, TokenModel idtoken);
-
-        //Task<ApplicationUser> ValidateUser(LoginCredentials credentials);
-
-        //Task<bool> Logout(string token);
-
-        //Task<Response> Register(UserDetails userDetails);
-
-        //Task<Response> Login(LoginCredentials credentials);
-
-        //LoginModel GetLoginDetails(string Id);
-
-        //Response Authentication(string accessToken);
-
-        //Task<Response> ChangePassword(string userId, string oldPassword, string newPassword);
-
-        //Task<Response> UserProfile(UserProfile userProfile);
-
-        //UserProfile GetUserProfile(long userId);
-
-        //Task<Response> ForgotPassword(string email);
-
-        //Task<Response> ResetPassword(ResetPasswordModel resetPasswordModel);
-
-        //Task<Response> UpdateCurrency(long userId, long currencyId);
-
-        //List<CountryCode> GetPhoneCodeList();
     }
 
     public class AuthService : IAuthService
@@ -75,15 +46,6 @@ namespace AngularAndNetCoreAuth.Repo
         private readonly JwtBearerTokenSettings jwtBearerTokenSettings;
         private readonly JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
         private IHttpContextAccessor httpContextAccessor;
-        //private IAdvisorRepository AdvisorRepository;
-        //private INewsLetterRepository NewsLetterRepository;
-        //private IUserPreferenceRepository UserPreferenceRepository;
-        //private IMailQueueRepository MailQueueRepository;
-        //private IMailBeforeQueueRepository MailBeforeQueueRepository;
-        //private IMailTemplateRepository MailTemplateRepository;
-        //private IEmailService EmailService;
-        //private IMixPanelService MixPanelService;
-        //private ICountryRepository CountryRepository;
 
         public AuthService(IHttpContextAccessor _httpContextAccessor, IOptions<JwtBearerTokenSettings> _jwtTokenOptions, UserManager<ApplicationUser> _userManager, RoleManager<IdentityRole> roleManager, UsersDbContext _dbContext)
         {
@@ -166,6 +128,11 @@ namespace AngularAndNetCoreAuth.Repo
                         response.Success = false;
                         response.Message = "User Registration Failed";
                         response.Data = valuePairs;
+                    }
+                    else
+                    {
+                        var res = GetResponse(identityUser, accessToken);
+                        return res;
                     }
                 }
                 else
