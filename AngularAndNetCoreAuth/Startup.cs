@@ -83,8 +83,8 @@ namespace AngularAndNetCoreAuth
             services.AddAuthentication().AddFacebook(options =>
         {
             options.SaveTokens = true;
-            options.AppId = "1133439733973767";
-            options.AppSecret = "beaff98b4f7357f1d0392bb7747776b6";
+            options.AppId = "1251391519125156";
+            options.AppSecret = "1d392c3bdbb339917c655a41a2524550";
             options.Events.OnTicketReceived = (context) =>
             {
                 return Task.CompletedTask;

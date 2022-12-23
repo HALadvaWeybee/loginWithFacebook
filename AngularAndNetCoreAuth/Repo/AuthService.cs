@@ -99,7 +99,7 @@ namespace AngularAndNetCoreAuth.Repo
             Response response = new Response();
             HttpClient client = new HttpClient();
             // 3. we've got a valid token so we can request user data from fb
-            var userInfoResponse = await client.GetStringAsync($"https://graph.facebook.com/v2.8/me?fields=id,email,first_name,last_name,name&access_token={accessToken.Token}");
+            var userInfoResponse = await client.GetStringAsync($"https://graph.facebook.com/v2.8/me?fields=id,first_name,last_name,middle_name,name,name_format,email&access_token={accessToken.Token}");
             var userInfo = JsonConvert.DeserializeObject<FacebookUserData>(userInfoResponse);
             var info = new UserLoginInfo("FACEBOOK", userInfo.id, "FACEBOOK");
             var user = await userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
@@ -112,7 +112,12 @@ namespace AngularAndNetCoreAuth.Repo
                 {
                     var identityUser = new ApplicationUser()
                     {
-                        UserName = userInfo.first_name,
+                        UserName = userInfo.name,
+                        FirstName = userInfo.first_name,
+                        LastName = userInfo.last_name,
+                        MiddleName = userInfo.middle_name,
+                        NameFormat = userInfo.name_format,
+                        Name = userInfo.name,
                         Email = userInfo.email,
                     };
 

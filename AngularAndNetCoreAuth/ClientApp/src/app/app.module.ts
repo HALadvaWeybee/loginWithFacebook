@@ -17,7 +17,7 @@ let config = new AuthServiceConfig([
     autoLogin:false,
     id: FacebookLoginProvider.PROVIDER_ID,
         //Use your FaceBook App Id here
-    provider: new FacebookLoginProvider("1133439733973767"),
+    provider: new FacebookLoginProvider("1251391519125156"),
   },
 ]);
 
